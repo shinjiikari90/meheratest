@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유쾌하고 뼈 때리는 멘헤라 테스트 (Menhera Test)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: 나눔스퀘어라운드 대체용 및 기본 한글 폰트 적용 -->
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Nunito:wght@400;600;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <!-- Font Awesome (아이콘용) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Gowun Dodum', 'Nanum Gothic', sans-serif;
+            background-color: #f2f7f5; /* 눈이 편안한 심리적 안정 세이지 화이트 */
+        }
+        .progress-bar {
+            transition: width 0.4s ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scale-up:active {
+            transform: scale(0.95);
+        }
+        /* 라벤더 핑크 포인트 컬러 유틸리티 */
+        .theme-accent {
+            color: #d482a4;
+        }
+        .bg-theme-accent {
+            background-color: #d482a4;
+        }
+        .border-theme-accent {
+            border-color: #d482a4;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 selection:bg-teal-200">
+
+<div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-teal-100 flex flex-col min-h-[620px] justify-between relative">
+    
+    <!-- Header / Decorative Element -->
+    <div class="h-3 bg-gradient-to-r from-teal-400 via-pink-300 to-indigo-400"></div>
+
+    <!-- MAIN CARD WRAPPER -->
+    <div class="p-6 sm:p-8 flex-grow flex flex-col justify-center">
+        
+        <!-- START SCREEN -->
+        <div id="start-screen" class="fade-in space-y-6 text-center py-4">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-teal-50 text-teal-600 mb-2">
+                <i class="fa-solid fa-heart-crack text-4xl animate-pulse text-pink-400"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">
+                내 마음 속 <span class="text-teal-600">유별남</span> 측정기<br>
+                <span class="text-pink-400 font-bold text-4xl">멘헤라 테스트</span>
+            </h1>
+            
+            <div class="bg-teal-50 border border-teal-100/80 rounded-2xl p-5 text-left space-y-3 shadow-inner">
+                <p class="text-slate-700 text-sm sm:text-base leading-relaxed font-semibold text-center">
+                    "나는 정말 멘헤라일까?" 👀
+                </p>
+                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                    요즘 유행하는 밈 '멘헤라(정병 감성)', 누구나 은밀하게 숨겨둔 불안정함과 독특함을 유쾌하게 까발려 드립니다. 누구도 알려주지 않았던 정병(?)의 세계로 당신을 안내합니다. 
+                </p>
+                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-medium">
+                    ⚠️ <strong class="text-teal-700">주의:</strong> 문항 자체는 실제 애착 이론, 거절 민감성 등 과학적 심리 척도를 기반으로 정교하게 설계되었으나, 결과 진단은 뼈 때리는 독설과 위트가 난무하니 상처받지 마세요!
+                </p>
+            </div>
+
+            <button onclick="startTest()" class="w-full py-4 px-6 bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg rounded-2xl shadow-lg transition duration-300 transform hover:-translate-y-1 scale-up flex items-center justify-center gap-2">
+                내 정신세계 탐험하기 <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <p class="text-slate-400 text-xs">총 20개 문항 | 소요 시간 약 3분</p>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div id="question-screen" class="hidden fade-in flex flex-col justify-between h-full space-y-6">
+            <!-- Progress Tracker -->
+            <div>
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2">
+                    <span id="question-index-label" class="bg-teal-100 text-teal-800 px-2.5 py-1 rounded-full">질문 1 of 20</span>
+                    <span id="percent-label" class="text-pink-500">5% 진행됨</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                    <div id="progress-indicator" class="progress-bar bg-gradient-to-r from-teal-500 to-pink-400 h-2.5 w-[5%] rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="my-auto py-4">
+                <div class="bg-teal-50/50 p-2 rounded-xl inline-block text-xs font-bold text-teal-700 mb-3 uppercase tracking-wider" id="category-badge">
+                    관계적 불안정성 자가 진단
+                </div>
+                <h2 id="question-text" class="text-xl sm:text-2xl font-bold text-slate-800 leading-snug">
+                    질문 내용 로딩 중...
+                </h2>
+            </div>
+
+            <!-- Likert Scale Buttons (1 to 5) -->
+            <div class="space-y-2.5 pt-4">
+                <button onclick="answerQuestion(5)" class="w-full p-4 text-left border-2 border-slate-100 hover:border-pink-300 hover:bg-pink-50/50 rounded-2xl transition-all duration-200 flex items-center justify-between group">
+                    <span class="font-semibold text-slate-700 group-hover:text-pink-700 text-sm sm:text-base">완전 내 얘기다! (진짜 매일 이럼)</span>
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-pink-100 text-pink-600 font-bold text-xs shrink-0 ml-2">5</span>
+                </button>
+                <button onclick="answerQuestion(4)" class="w-full p-4 text-left border-2 border-slate-100 hover:border-teal-200 hover:bg-teal-50/40 rounded-2xl transition-all duration-200 flex items-center justify-between group">
+                    <span class="font-medium text-slate-700 group-hover:text-teal-800 text-sm sm:text-base">대체로 그런 편이다 (자주 겪음)</span>
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-teal-100 text-teal-600 font-bold text-xs shrink-0 ml-2">4</span>
+                </button>
+                <button onclick="answerQuestion(3)" class="w-full p-4 text-left border-2 border-slate-100 hover:border-slate-300 hover:bg-slate-50 rounded-2xl transition-all duration-200 flex items-center justify-between group">
+                    <span class="font-medium text-slate-600 group-hover:text-slate-800 text-sm sm:text-base">보통이다 (가끔 어쩌다 한 번)</span>
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-slate-200 text-slate-600 font-bold text-xs shrink-0 ml-2">3</span>
+                </button>
+                <button onclick="answerQuestion(2)" class="w-full p-4 text-left border-2 border-slate-100 hover:border-teal-200 hover:bg-teal-50/40 rounded-2xl transition-all duration-200 flex items-center justify-between group">
+                    <span class="font-medium text-slate-600 group-hover:text-teal-800 text-sm sm:text-base">별로 그렇지 않다 (드문 편임)</span>
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-teal-50 text-teal-500 font-bold text-xs shrink-0 ml-2">2</span>
+                </button>
+                <button onclick="answerQuestion(1)" class="w-full p-4 text-left border-2 border-slate-100 hover:border-pink-300 hover:bg-pink-50/50 rounded-2xl transition-all duration-200 flex items-center justify-between group">
+                    <span class="font-semibold text-slate-500 group-hover:text-pink-700 text-sm sm:text-base">전혀 아니다! (나랑 하등 상관없음)</span>
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-pink-50 text-pink-400 font-bold text-xs shrink-0 ml-2">1</span>
+                </button>
+            </div>
+
+            <!-- Back navigation inside test -->
+            <div class="flex justify-between items-center text-xs text-slate-400 pt-2">
+                <button onclick="prevQuestion()" id="btn-prev" class="hover:text-slate-600 flex items-center gap-1 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-chevron-left"></i> 이전 질문으로
+                </button>
+                <span>솔직하게 답할수록 정확합니다 🤫</span>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="hidden fade-in space-y-6">
+            
+            <!-- Badge & Name -->
+            <div class="text-center space-y-2">
+                <div class="inline-block px-4 py-1.5 rounded-full text-xs font-extrabold bg-pink-100 text-pink-700 uppercase tracking-wide" id="result-badge-container">
+                    결과 로딩 중
+                </div>
+                <h1 class="text-3xl font-extrabold text-slate-800" id="result-title">
+                    진단명 출력 중
+                </h1>
+                <!-- Simple Gauge Visualization -->
+                <div class="py-2">
+                    <div class="text-sm font-semibold text-slate-500 mb-1">멘헤라 지수: <span id="result-score-text" class="text-pink-500 font-bold text-lg">0</span>%</div>
+                    <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden border border-slate-200">
+                        <div id="result-score-bar" class="bg-gradient-to-r from-teal-400 via-pink-400 to-red-400 h-full w-[0%] transition-all duration-1000"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Graphic (Dynamic Inline SVG based on score) -->
+            <div class="flex justify-center py-2" id="result-svg-container">
+                <!-- SVG injected dynamically -->
+            </div>
+
+            <!-- Core Insight: Fact Bomb and Sweet Therapy -->
+            <div class="space-y-4">
+                <!-- 독설 팩폭 -->
+                <div class="bg-red-50 border-l-4 border-red-400 rounded-r-2xl p-4">
+                    <div class="flex items-center gap-2 text-red-700 font-bold text-sm mb-1">
+                        <i class="fa-solid fa-skull"></i> 팩트 폭격
+                    </div>
+                    <p class="text-slate-700 text-xs sm:text-sm leading-relaxed" id="result-fact-bomb">
+                        여기에 독설 내용이 삽입됩니다.
+                    </p>
+                </div>
+
+                <!-- 심리학적 설명 -->
+                <div class="bg-teal-50 border-l-4 border-teal-500 rounded-r-2xl p-4">
+                    <div class="flex items-center gap-2 text-teal-800 font-bold text-sm mb-1">
+                        <i class="fa-solid fa-brain"></i> 심리학적 분석 보고서
+                    </div>
+                    <p class="text-slate-700 text-xs sm:text-sm leading-relaxed" id="result-psychology">
+                        여기에 과학적 배경이 삽입됩니다.
+                    </p>
+                </div>
+
+                <!-- 생존 처방전 -->
+                <div class="bg-indigo-50 border-l-4 border-indigo-400 rounded-r-2xl p-4">
+                    <div class="flex items-center gap-2 text-indigo-800 font-bold text-sm mb-1">
+                        <i class="fa-solid fa-notes-medical"></i> 갓생을 위한 현실 처방전
+                    </div>
+                    <p class="text-slate-700 text-xs sm:text-sm leading-relaxed" id="result-prescription">
+                        여기에 현실적인 조언이 삽입됩니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Share & Action Buttons -->
+            <div class="space-y-3 pt-2">
+                <button onclick="copyShareLink()" class="w-full py-3.5 px-4 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm sm:text-base rounded-2xl shadow-md transition duration-200 scale-up flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-share-nodes"></i> 테스트 결과 링크 복사하기
+                </button>
+                <button onclick="restartTest()" class="w-full py-3 px-4 border-2 border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-800 hover:bg-slate-50 font-bold text-sm rounded-2xl transition duration-200 scale-up flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> 처음부터 다시 검사하기
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Credit -->
+    <div class="bg-slate-50 border-t border-slate-100 px-6 py-4 flex justify-between items-center text-xs text-slate-400">
+        <span>© 2026 멘헤라 테스트 Lab.</span>
+        <span>심리학적 데이터 기반</span>
+    </div>
+</div>
+
+<!-- CUSTOM TOAST NOTIFICATION -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs sm:text-sm px-6 py-3 rounded-full shadow-2xl opacity-0 transform translate-y-3 transition-all duration-300 pointer-events-none flex items-center gap-2 z-50">
+    <i class="fa-solid fa-circle-check text-teal-400"></i>
+    <span id="toast-message">클립보드에 복사되었습니다!</span>
+</div>
+
+<script>
+    // 20 Scientific/Psychological base Questions styled as "Menhera memes"
+    const questions = [
+        {
+            text: "카카오톡 답장이 평소보다 조금만 늦어져도 '내가 혹시 무슨 실수했나?' 하며 전전긍긍한다.",
+            category: "거절 민감성 (RSD)",
+            dimension: "Rejection Sensitivity"
+        },
+        {
+            text: "상대방이 마침표(.)만 찍거나 이모티콘을 생략한 메신저 말투에서 차가운 온도를 감지한다.",
+            category: "거절 민감성 (RSD)",
+            dimension: "Rejection Sensitivity"
+        },
+        {
+            text: "기분이 하늘을 찌르다가도, 아주 사소한 말 한마디에 즉시 심연 속 우울로 추락하곤 한다.",
+            category: "정서 조절 불안정성",
+            dimension: "Emotional Dysregulation"
+        },
+        {
+            text: "나를 완벽히 이해하고 무조건적으로 품어 줄 '진정한 소울메이트'가 세상 어딘가에 꼭 있다고 믿는다.",
+            category: "이상화 및 투사",
+            dimension: "Idealization"
+        },
+        {
+            text: "SNS에 글이나 사진을 올린 후, 반응(좋아요/조회수)이 별로 없으면 초조해져서 결국 삭제해 버린다.",
+            category: "자기 가치 및 인정 욕구",
+            dimension: "Attention Seeking"
+        },
+        {
+            text: "친구가 단순하게 건넨 조언이나 피드백을 들으면, 조언이 아닌 '나라는 존재 자체에 대한 부정'으로 다가온다.",
+            category: "자존감 및 방어 기제",
+            dimension: "Low Self-Esteem"
+        },
+        {
+            text: "매일 밤마다 과거에 후회했던 일이나 미래의 비극적인 시나리오를 머릿속으로 무한 반복 재생한다.",
+            category: "반추(Rumination) 습관",
+            dimension: "Anxiety & Rumination"
+        },
+        {
+            text: "좋아하는 상대에 따라 나의 성격, 말투, 심지어 가치관까지 그들이 좋아할 법한 페르소나로 완벽 세팅한다.",
+            category: "정체성 혼란",
+            dimension: "Identity Diffusion"
+        },
+        {
+            text: "지독한 외로움 때문에 아무나 만나 대화를 나누지만, 정작 돌아올 땐 엄청난 현타와 공허감을 마주한다.",
+            category: "공허감 및 임기응변적 충동성",
+            dimension: "Emptiness"
+        },
+        {
+            text: "말하기 민망해서 숨겨둔 슬픈 마음을 남들이 알아서 캐치해 주고 먼저 챙겨주기를 내심 바란다.",
+            category: "수동 공격적 의사소통",
+            dimension: "Passive Aggressiveness"
+        },
+        {
+            text: "한 번 나를 서운하게 만든 사람은 즉시 내 마음의 장부에서 '영구 삭제(손절)' 처리해 버린다.",
+            category: "분리 기제 (Splitting)",
+            dimension: "All-or-Nothing Thinking"
+        },
+        {
+            text: "오늘 가벼운 약속이나 일정 하나가 삐끗하면 '내 인생은 역시 매사 이 모양이지' 하고 전부 자포자기한다.",
+            category: "인지적 왜곡 (파국화)",
+            dimension: "Catastrophizing"
+        },
+        {
+            text: "어떤 날은 내가 세상 최고 천재 같다가도, 또 어떤 날은 세상에 존재해선 안 될 쓰레기같이 느껴진다.",
+            category: "자기 가치의 급변성",
+            dimension: "Unstable Self-Esteem"
+        },
+        {
+            text: "연인이나 친구가 언제든 나를 버릴 수 있다는 극심한 두려움에 사로잡혀 산다.",
+            category: "유기 불안 (Fear of Abandonment)",
+            dimension: "Anxious Attachment"
+        },
+        {
+            text: "심한 스트레스를 받으면 보복 소비를 하거나 자극적인 음식을 정신없이 폭식해 버린다.",
+            category: "충동적 자기 조절력",
+            dimension: "Impulsivity"
+        },
+        {
+            text: "가끔 내가 불행하고 지독히 고독한 상태에 빠져 있는 그 몽환적인 분위기 자체를 즐기는 기분이 든다.",
+            category: "피해자 정체성 투사",
+            dimension: "Secondary Gain of Sadness"
+        },
+        {
+            text: "주변 사람들의 불만이나 차가운 눈총을 견디지 못해 내 기분은 억누르고 늘 '착한 사람'인 척 연출한다.",
+            category: "타인 지향적 자아",
+            dimension: "People Pleasing"
+        },
+        {
+            text: "누군가 '진짜 가식 없는 내 진짜 모습'을 완전히 알게 되면 틀림없이 실망하고 나를 떠날 거라 믿는다.",
+            category: "근원적 수치심",
+            dimension: "Core Shame"
+        },
+        {
+            text: "타인의 SNS 속 완벽하고 평화로운 일상을 보면 나도 모르게 가슴 밑바닥에서 뜨거운 박탈감과 분노가 인다.",
+            category: "비교 편향",
+            dimension: "Comparison Bias"
+        },
+        {
+            text: "누가 툭 치거나 따뜻한 한마디만 조용히 건네도 금방이라도 왈칵 눈물이 흘러내릴 만큼 마음이 한계치에 닿아있다.",
+            category: "정서적 취약성",
+            dimension: "Vulnerability"
+        }
+    ];
+
+    // Result Categories Setup
+    const results = [
+        {
+            minScore: 20,
+            maxScore: 35,
+            badge: "티타늄 에고",
+            title: "강철의 멘탈 수호자 (The Robot)",
+            factBomb: "당신은 멘헤라 근처에도 못 가본, 무감각할 정도로 단단한 멘탈의 소유자입니다. 가끔은 너무 타격감이 없어서 상대방이 '이 인간은 피 대신 냉각수가 흐르나?' 하고 의아해할 수 있습니다. 멘탈이 강한 건 축복이지만 감정을 외면하거나 억누르고 있는 건 아닌지 의심해보세요.",
+            psychology: "심리학적으로 '자기 분화(Self-differentiation)' 수준이 아주 높고, 정서적 경계선이 뚜렷한 상태입니다. 외부 자극과 나의 감정을 독립적으로 분리할 줄 아는 건강한 방어기제를 활용하고 있습니다.",
+            prescription: "가끔은 주변 사람들에게 당신의 약점이나 약한 소리를 의식적으로 표현해 보세요. 완벽한 도자기 인형보다 조금은 틈이 있는 인간이 훨씬 매력적이니까요.",
+            svg: `<svg class="w-40 h-40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="#E2ECE9"/>
+                    <rect x="35" y="30" width="30" height="30" rx="4" fill="#3A6073"/>
+                    <circle cx="43" cy="42" r="3" fill="#FFF"/>
+                    <circle cx="57" cy="42" r="3" fill="#FFF"/>
+                    <path d="M42 50 H58" stroke="#FFF" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M25 45 L35 48 M75 45 L65 48" stroke="#3A6073" stroke-width="4" stroke-linecap="round"/>
+                  </svg>`
+        },
+        {
+            minScore: 36,
+            maxScore: 55,
+            badge: "은은한 세미-광기",
+            title: "은은하게 돌아버린 평범한 갓생러",
+            factBomb: "본인이 꽤나 복잡하고 특별한 '고독한 아웃사이더' 혹은 '숨겨진 정신병자'라고 생각했을 수도 있지만 미안하지만 아주 극도로 평범하십니다. 가끔 우울 터져서 새벽에 이불킥하고 SNS를 지웠다 깔았다 반복하지만, 아침 8시 알람에 눈 비비고 일어나 성실하게 출근 및 등교를 마치는 건강한 생활력의 소유자입니다.",
+            psychology: "안정형 애착에 가까우며 일시적인 환경 스트레스로 인한 경미한 우울이나 불안을 겪는 상태입니다. 회복탄력성(Resilience)이 훌륭하여 스스로 슬픔의 늪에서 헤어 나오는 힘이 뛰어납니다.",
+            prescription: "당신이 느끼는 사소한 불안정감은 성장을 위한 지극히 정상적인 감정입니다. 새벽 감성에 무리한 결정만 내리지 않는다면 평생 안전지대에 계실 겁니다.",
+            svg: `<svg class="w-40 h-40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="#ECEFEF"/>
+                    <circle cx="50" cy="48" r="28" fill="#FFF" stroke="#3A6073" stroke-width="4"/>
+                    <path d="M42 45 Q45 42 48 45" stroke="#3A6073" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M52 45 Q55 42 58 45" stroke="#3A6073" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M43 58 Q50 64 57 58" stroke="#3A6073" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="28" cy="35" r="5" fill="#F8BBD0"/>
+                    <circle cx="72" cy="35" r="5" fill="#F8BBD0"/>
+                  </svg>`
+        },
+        {
+            minScore: 56,
+            maxScore: 75,
+            badge: "감성 과다 복용",
+            title: "비오는 날의 비운의 주인공 (Moody Artist)",
+            factBomb: "인생의 서사에서 스스로를 비련의 주인공으로 캐스팅하셨군요. 비가 올 때 창밖을 아련하게 쳐다보며 고독에 젖어 들거나, 사소한 말 한마디를 온종일 곱씹으며 의미부여를 하는 것에 달인입니다. 기분이 롤러코스터라 주변 사람들은 당신의 감정선을 타느라 가끔 멀미를 느낄 수도 있습니다.",
+            psychology: "성격 5대 특성(Big Five) 중 '신경증(Neuroticism)'이 다소 높고 공감 능력이 뛰어난 편입니다. 타인의 거절에 민감하게 반응하여 불안형 애착 스타일의 징후를 보이기 시작하는 단계입니다.",
+            prescription: "머릿속 소설 집필을 중단하세요! '저 사람 나 싫어하나?'의 99%는 사실 상대가 배고프거나 피곤해서 그런 것입니다. 감정이 휘몰아칠 땐 즉시 가벼운 산책을 가거나 청소를 하며 몸을 움직이세요.",
+            svg: `<svg class="w-40 h-40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="#FFF0F5"/>
+                    <path d="M35 48 Q50 35 65 48" stroke="#D4A5B8" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="42" cy="54" r="3.5" fill="#3A6073"/>
+                    <circle cx="58" cy="54" r="3.5" fill="#3A6073"/>
+                    <path d="M46 66 Q50 62 54 66" stroke="#3A6073" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M38 60 Q34 60 36 56" stroke="#90CAF9" stroke-width="2" stroke-linecap="round"/>
+                  </svg>`
+        },
+        {
+            minScore: 76,
+            maxScore: 90,
+            badge: "쿠쿠다스 멘탈",
+            title: "유리공예 장인이 빚은 아슬아슬함",
+            factBomb: "거의 준(準) 멘헤라 등극 직전입니다! 당신의 하트는 설탕 유리로 만들어져서 조금만 큰 목소리를 듣거나 서늘한 카톡 답장만 받아도 즉시 와장창 깨져버립니다. 타인에게 극도로 의존하거나 반대로 상처받지 않으려고 벽을 치며 '내가 먼저 버려야지' 하고 도망치는 패턴을 반복하고 있진 않나요?",
+            psychology: "심각한 '거절 민감성 증후군(RSD)'과 더불어 '불안-회피 혼란형 애착'의 성향을 나타냅니다. 자아 존중감이 지나치게 타인의 평가에 결부되어 있어 매 순간 에너지가 바닥나기 쉽습니다.",
+            prescription: "모두에게 완벽히 사랑받을 수는 없습니다. 타인의 기분은 타인의 몫입니다. '미움받을 용기'를 거창하게 가지기보단 '어쩌라고, 지가 뭔데?'라는 가벼운 마인드 컨트롤을 하루 3번씩 복용해 보세요.",
+            svg: `<svg class="w-40 h-40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="#E8EAF6"/>
+                    <path d="M50 25 C40 15, 20 25, 40 55 C45 62, 50 65, 50 65 C50 65, 55 62, 60 55 C80 25, 60 15, 50 25 Z" fill="#EF9A9A"/>
+                    <path d="M47 30 L53 50 M54 32 L46 48" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="38" cy="52" r="3" fill="#D4A5B8"/>
+                    <circle cx="62" cy="52" r="3" fill="#D4A5B8"/>
+                  </svg>`
+        },
+        {
+            minScore: 91,
+            maxScore: 100,
+            badge: "블랙홀 정병 왕",
+            title: "심연의 마스터: 우주 최강 멘헤라",
+            factBomb: "축하합니다, 인간 블랙홀이시군요! 주변 사람들의 사랑과 관심, 위로를 마구 빨아들이지만 끝이 보이지 않는 정서적 허기에 시달리고 있습니다. '나 진짜 아프고 우울해'를 직간접적으로 끊임없이 시그널을 보내며 남들의 관심을 시험하는 정량 초과의 상태입니다. 이대로 가다간 상대방도 지쳐 나가떨어지고 당신도 깊은 상처를 입게 됩니다.",
+            psychology: "경계선 성격 특성(Borderline traits)과 중증도의 정서적 조절 곤란(Emotion dysregulation)을 시사할 수 있습니다. 감정이 해일처럼 몰아쳐 인지적 왜곡이 극에 달한 상태입니다.",
+            prescription: "우선 SNS와 메신저를 당장 끄세요! 스마트폰에서 멀어지고, 가능하다면 감정을 다스려 줄 전문 심리상담 센터나 병원을 가볍게 방문하는 것을 강력히 권장합니다. 당신의 상처받은 내면아이는 외부의 관심이 아니라 오직 당신 자신의 차분하고 따뜻한 인정이 필요합니다.",
+            svg: `<svg class="w-40 h-40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="#FCE4EC"/>
+                    <!-- Blackhole center -->
+                    <circle cx="50" cy="50" r="18" fill="#1A237E"/>
+                    <!-- Swirling arms -->
+                    <path d="M50 20 Q65 30 50 50" stroke="#EC407A" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M50 80 Q35 70 50 50" stroke="#8E24AA" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="8" fill="#FFF"/>
+                    <!-- Sad eyes outside -->
+                    <path d="M28 40 Q35 32 40 40" stroke="#1A237E" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M72 40 Q65 32 60 40" stroke="#1A237E" stroke-width="3" stroke-linecap="round"/>
+                  </svg>`
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let scores = [];
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('question-screen').classList.remove('hidden');
+        currentQuestionIndex = 0;
+        scores = [];
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentQuestionIndex];
+        
+        // Update labels
+        document.getElementById('question-index-label').innerText = `질문 ${currentQuestionIndex + 1} of ${questions.length}`;
+        const percent = Math.round(((currentQuestionIndex) / questions.length) * 100);
+        document.getElementById('percent-label').innerText = `${percent}% 진행됨`;
+        document.getElementById('progress-indicator').style.width = `${percent}%`;
+        
+        // Update content
+        document.getElementById('category-badge').innerText = q.category;
+        document.getElementById('question-text').innerText = q.text;
+
+        // Navigation button state
+        const btnPrev = document.getElementById('btn-prev');
+        if (currentQuestionIndex === 0) {
+            btnPrev.disabled = true;
+            btnPrev.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            btnPrev.disabled = false;
+            btnPrev.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    function answerQuestion(score) {
+        scores[currentQuestionIndex] = score;
+        
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+        } else {
+            // Final progress finish
+            document.getElementById('progress-indicator').style.width = `100%`;
+            document.getElementById('percent-label').innerText = `100% 진행됨`;
+            setTimeout(showResults, 300);
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('question-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+
+        // Calculate total score
+        const totalScore = scores.reduce((acc, curr) => acc + curr, 0);
+        
+        // Max possible: 100, Min possible: 20
+        const percentage = Math.round(((totalScore - 20) / 80) * 100);
+
+        // Find appropriate category
+        let matchedResult = results[0];
+        for (const res of results) {
+            if (totalScore >= res.minScore && totalScore <= res.maxScore) {
+                matchedResult = res;
+                break;
+            }
+        }
+
+        // Apply to UI
+        document.getElementById('result-badge-container').innerText = matchedResult.badge;
+        document.getElementById('result-title').innerText = matchedResult.title;
+        document.getElementById('result-score-text').innerText = percentage;
+        
+        // Animate progress bar in results
+        setTimeout(() => {
+            document.getElementById('result-score-bar').style.width = `${percentage}%`;
+        }, 150);
+
+        // Render SVG dynamically
+        document.getElementById('result-svg-container').innerHTML = matchedResult.svg;
+
+        // Inject content
+        document.getElementById('result-fact-bomb').innerText = matchedResult.factBomb;
+        document.getElementById('result-psychology').innerText = matchedResult.psychology;
+        document.getElementById('result-prescription').innerText = matchedResult.prescription;
+    }
+
+    function restartTest() {
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('start-screen').classList.remove('hidden');
+    }
+
+    function copyShareLink() {
+        const dummyText = `🧠 멘헤라 테스트 결과 | 내 마음 속 유별남 지수는 과연? 🧠\n현재 나를 지배하는 정신적 키워드와 뼈 때리는 심리 처방전을 확인해 보세요!\n\n▶ 테스트 하러 가기: ${window.location.href}`;
+        
+        // Safe fallback clipboard copy
+        const tempTextArea = document.createElement("textarea");
+        tempTextArea.value = dummyText;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        tempTextArea.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand("copy");
+            showToast("결과 공유 메시지가 클립보드에 복사되었습니다! 🎉");
+        } catch (err) {
+            showToast("링크 복사에 실패했습니다. 주소창 복사를 이용해주세요.");
+        }
+        
+        document.body.removeChild(tempTextArea);
+    }
+
+    // Modern custom toast alerts (alert() strictly avoided)
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+        
+        toastMsg.innerText = message;
+        toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+        toast.classList.add('opacity-100', 'translate-y-0');
+        
+        setTimeout(() => {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+        }, 3000);
+    }
+</script>
+</body>
+</html>
